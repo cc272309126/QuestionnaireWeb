@@ -13,8 +13,8 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <script src="js/html5shiv.min.js"></script>
     <script src="js/respond.min.js"></script>
-   <STYLE type="text/css"> 
     
+   <STYLE type="text/css"> 
 html {
   position: relative;
   min-height: 100%;
@@ -35,7 +35,4 @@ html {
 	width:100%;
 	padding-left:200px;
 }
-
-
-
    </STYLE> 

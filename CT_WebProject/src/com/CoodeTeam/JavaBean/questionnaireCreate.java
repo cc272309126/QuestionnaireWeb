@@ -1,7 +1,10 @@
 package com.CoodeTeam.JavaBean;
 import java.sql.*;
+import java.util.ArrayList;
+
 import com.CoodeTeam.JavaBean.Users;
 import com.mysql.jdbc.Statement;
+import com.CoodeTeam.JavaBean.QuestionItem;
 
 public class questionnaireCreate {
 	   String password="";
@@ -16,6 +19,7 @@ public class questionnaireCreate {
 	   String  isalive ="";
 	   String   UsersName ="";
 	   String  UserID="";
+	ArrayList<QuestionItem> QuestionsItems=new ArrayList<QuestionItem >();
 	public boolean alive=true;
       
 	String sDBDriver = "com.mysql.jdbc.Driver";
@@ -24,6 +28,7 @@ public class questionnaireCreate {
 	String resultRow = "<tr> <td></td><td><table><tr></tr><tr> ";
 	
 	ResultSet result=null;
+	
 	/* 
 	private String title;
 	private String subject;
@@ -53,45 +58,52 @@ public String Select(String id){
 		
 		
 		try{
+			DBAccess db = new DBAccess();
+			ResultSet ra=null;
+			//ArrayList answerItems=new ArrayList<String >();
+			try{
+			if(db.createConn()){
+				String sql = "SELECT * FROM questionaire where questionaire.idQuestionare = '" +id+"';";
+				db. query(sql);
+				result=db.getRs();
+				
+				 while(result.next()){
+				    	
+				    	String temp =result.getString("type").trim();
+				    	if(temp.equals("single")){
+				    		
+				    			resultRow += ""+result.getString("order")+".（单选)";
+				    			resultRow +=""+ result.getString("question")+"</br>";
+				    			resultRow += ""+result.getString("answers")+"</tr><tr> 	";
+				    	}
+				    	else if(temp.equals("mutiple")){
+				    			resultRow +=""+ result.getString("order")+".（多选)";
+				    			resultRow += ""+result.getString("question")+"</br>";
+						    	resultRow += ""+result.getString("answers")+"</tr><tr> 	";
+				    	}
+				    	else if(temp.equals("blank")){
+				    			resultRow += ""+result.getString("order")+".（填空）";
+				    			resultRow +=""+ result.getString("question")+"</tr><tr>";
+				    	}
+				    	resultRow +="</br></br>";
+				    		
+				    }
+				    	
+				    resultRow +="</tr></table></td></tr>";
+				    	
+				    
+				    db.closeRs();
+				    db.closeConn();
+				    
+				   
+			}}catch (Exception e)
+			{
+				
+			}
 			
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/webdb","root",password);
-		    Statement stmt= (Statement) conn.createStatement();
-		    String st = "SELECT * FROM questions where Questionare_idQuestionare = " +id;
-		    result = stmt.executeQuery(st);
-		    
-		   // ResultSetMetaData resultMetaData = result.getMetaData();
-		    //int colomns = resultMetaData.getColumnCount();
-		  
+			
 
 		   
-		    while(result.next()){
-		    	
-		    	String temp =result.getString("type").trim();
-		    	if(temp.equals("single")){
-		    		
-		    			resultRow += ""+result.getString("order")+".（单选)";
-		    			resultRow +=""+ result.getString("question")+"</br>";
-		    			resultRow += ""+result.getString("answers")+"</tr><tr> 	";
-		    	}
-		    	else if(temp.equals("mutiple")){
-		    			resultRow +=""+ result.getString("order")+".（多选)";
-		    			resultRow += ""+result.getString("question")+"</br>";
-				    	resultRow += ""+result.getString("answers")+"</tr><tr> 	";
-		    	}
-		    	else if(temp.equals("blank")){
-		    			resultRow += ""+result.getString("order")+".（填空）";
-		    			resultRow +=""+ result.getString("question")+"</tr><tr>";
-		    	}
-		    	resultRow +="</br></br>";
-		    		
-		    }
-		    	
-		    resultRow +="</tr></table></td></tr>";
-		    	
-		    
-		  
-		    conn.close();
 		   
 		   
 		}catch(Exception e){
@@ -105,20 +117,23 @@ public String Select(String id){
 	public questionnaireCreate(String id) {
 		super();
 		this.idQuestionare = id;
-		 Connection conn=null;
-	       try{
-	      Class.forName("com.mysql.jdbc.Driver");
-	     conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/webdb","root",password);
-	     Statement stmt=(Statement) conn.createStatement();
-	     ResultSet ra=stmt.executeQuery("SELECT * FROM Questionaire where idQuestionare = '" +id+"';");
+		DBAccess db = new DBAccess();
+		ResultSet ra=null;
+		//ArrayList answerItems=new ArrayList<String >();
+		try{
+		if(db.createConn()){
+			String sql = "SELECT * FROM questionaire where questionaire.idQuestionare = '" +id+"';";
+			db. query(sql);
+			ra=db.getRs();
+	
 	      if(ra.next())
 	      {
 	    	  idQuestionare=ra.getString("idQuestionare");
-	    	  State=ra.getString("state");
+	    	  State=ra.getString("State");
 	    	  title=ra.getString("title");
 	    	  subject=ra.getString("subject");
 	    	  description=ra.getString("description");
-	    	  
+	    	  State=ra.getString("State");
 	    	  startdate=ra.getString("startdate");
 	    	  enddate=ra.getString("enddate");
 	    	  launchdate=ra.getString("launchdate");
@@ -133,33 +148,78 @@ public String Select(String id){
 	    	  else{
 	    		  alive=false;
 	    	  }
+	    	  
+	    	  DBAccess db1 = new DBAccess();
+	  		   ResultSet rs=null;
+	  		
+	  		try{
+	  		if(db1.createConn()){
+	  			String sql1 = "select * FROM questions WHERE questions.Questionare_idQuestionare='"+idQuestionare+"';";
+	  			db1. query(sql1);
+	  			rs=db1.getRs();
+	  			while(rs.next())
+	  			{
+	  			     String aa= rs.getString("idQuestion");
+	  			     QuestionItem temp =new QuestionItem(aa);
+	  			     QuestionsItems.add(temp);
+	  			       
+	  				}
+	  				
+	  				
+	  			}
+	  			db1.closeStm();
+	  			db1.closeConn();
+	  		}
+	  		catch (Exception e)
+	  		{
+	  			
+	  		}
+	  		
 	    
 	      }
 	       ra.close();
-	       conn.close();
-	       }catch(Exception e)
+	       db.closeConn();
+	       }
+		}catch(Exception e)
 	       {
 	  	   //out.println(e.getMessage());
 	  	  }
 	}
 	public String show()
 	{String aa="";
-	  aa+=" <table align =center><tr></tr><tr> <td>问卷题目：</td><td>"
+	  aa+=" <table class='table'  ><tr> <td>问卷题目：</td><td>"
 	  +this.title+"</td></tr><tr> <td>"+"标签：</td><td> "
-	  +this.subject +"</td></tr><tr> <td>状态:</td><td>"
+	  +this.subject +"</td></tr><tr> <td>发布状态:</td><td>"
 	  +this.State+"</td></tr><tr> <td>描述：</td><td>"
 	  +this.description +"</td></tr><tr> <td>开始日期：</td><td>"
 	  +this.startdate +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr><tr> <td> 结束日期：</td><td>"
 	  +this.enddate+"</td></tr><tr> <td> 编辑时间：</td><td>"
 	  +this.launchdate+"</td></tr><tr> <td> 最高状态:</td><td>"
 	  +this.isalive+"</td></tr><tr> <td> 发布人：</td><td>"
-	  +"<a href ='UserInformation.jsp?action=show&id="+this.UserID+"' >"+ this.UsersName+"</a></td></tr><tr> <td>内容</td>";
+	  +"<a href ='UserInformation.jsp?action=show&id="+this.UserID+"' >"+ this.UsersName+"</a></td></tr></table>";
 	 
 	  ;
 	  
 
 	return aa;
 		
+	}
+	 
+	public String Tostring ()
+	{
+		  String a="";
+		  a+= idQuestionare ;
+		  a+= State ;
+		  a+= title ;
+		  a+=  startdate;
+		  a+= UserID ;
+		
+		  for(int i=0;i<QuestionsItems.size();i++)
+			{
+				
+				a+="</br>"+((QuestionItem)QuestionsItems.get(i)).Tostring();
+			}
+		  return a;
 	}
 	public void disablequestionnaire()
 	{   String userid=this.idQuestionare;
@@ -236,6 +296,7 @@ public String Select(String id){
 			db.closeConn();
 		}
 	}
+	
 
 	
 }

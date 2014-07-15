@@ -454,7 +454,7 @@
 <div class="span1" style="float:left"><button  class="btn btn-danger" onclick="fun4()" >判断</button></div>
 <div class="span1" style="float:left"><button  class="btn" onclick="fun5()" >问答</button></div>
 <div class="span1" style="float:left"><button  class="btn btn-primary" type= "button" id = "baocun" onClick="submit()">保存</button></div>
-<div class="span1" style="float:left"><button  type="button" class="btn btn-primary" id = "fabu" onclick="#" >发布</button></div>
+<div class="span1" style="float:left"><button  type="button" class="btn btn-primary" id = "fabu" onClick="#" >发布</button></div>
 
 </div>
 

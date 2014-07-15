@@ -132,18 +132,18 @@ public void additem(int num,String[] que,String[] ans,String type[],int queid)
 			
 			for(int i = 1; i<= num;i ++){
 				String sql = null;
-				if (type[i] == "单选" ){
-					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'单选','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
+				if (type[i] == "single" ){
+					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'single','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
 
 				}
-				else if (type[i] == "多选"){
-					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'多选','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
+				else if (type[i] == "mutiple"){
+					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'mutiple','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
 				}
-				else if(type[i] =="判断"){
-					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'判断','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
+				else if(type[i] =="judge"){
+					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'judge','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
 				}
-				else if(type[i] == "问答"){
-					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'问答','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
+				else if(type[i] == "blank"){
+					sql = "insert into questions(idQuestion,`type`,question,answers,analysise,`order`,Questionare_idQuestionare) values(null,'blank','"+que[i]+"','"+ans[i]+"',null,"+i+","+queid+")";
 				}				
 				
 				System.out.print(sql);

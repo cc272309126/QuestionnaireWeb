@@ -7,36 +7,87 @@
 <%@include file= "head.jsp"%>
 <title>我的问卷</title>
 <script src="/js/jquery-1.11.1.min.js"></script>
-<link href = "css/bootstrap-responsive.min.css" rel ="stylesheet">
+<link href = "css/bootstrap.min.css" rel ="stylesheet">
+<link href = "css/font-awesome.min.css" rel ="stylesheet" type="text/css">
+<link href = "css/bootstrap-responsive.min.css" rel ="stylesheet" type="text/css">
 <script type="text/javascript" language="javascript">
-
+function ViewQ(qid,state)
+{
+	alert(qid);
+	alert(state);
+	var put = document.getElementById("paraQ");
+	put.value=qid;
+	with (document.getElementById("formQ")){
+        method = "post";  
+        action = "#";
+        submit();
+	}
+}
+function EditQ(qid,state)
+{
+	alert(qid);
+	var put = document.getElementById("paraQ");
+	put.value=qid;
+	with (document.getElementById("formQ")){
+        method = "post";  
+        action = "Editque.jsp";
+        submit();
+    }  
+}
+function PublishQ(qid,state)
+{
+	alert(qid);
+	var put = document.getElementById("paraQ");
+	put.value=qid;
+	with (document.getElementById("formQ")){
+        method = "post";  
+        action = "#";
+        submit();
+    }  
+}
+function RemoveQ(qid,state)
+{
+	alert(qid);
+	var put = document.getElementById("paraQ");
+	put.value=qid;
+	with (document.getElementById("formQ")){
+        method = "post"; 
+        action = "UserServlet.do?method=deleteQuestionaire&Qpage=MyQC.jsp";
+        submit();
+    }  
+}
 </script>
 </head>
 <body>
 
 <%@include file= "header2.jsp" %>
 <% 
-	
-if (username==null)
+	int userid=0;
+	if (username==null)
 	{
 		response.sendRedirect("login.jsp");
+	}else{
+		userid=(Integer)session.getAttribute("UserID");
 	}
-int userid=(Integer)session.getAttribute("UserID");
 %>
 <br><br><br>
 <div class="container" id="content">
-<br><br>
 <div class ="controls-row">
-<div class="span2" ><button class="btn btn-primary" onclick="location.href='CreatQuestionaire.jsp'" >创建问卷</button></div>
-<div class="span2" ><button class="btn btn-primary" onclick="location.href='MyQA.jsp'" >全部问卷</button></div>
-<div class="span2" ><button class="btn btn-success" disabled onclick="location.href='MyQC.jsp'" >未发布问卷</button></div>
-<div class="span2" ><button class="btn btn-primary" onclick="location.href='MyQO.jsp'" >已发布问卷</button></div>
+<br><br>
+<div class="span1" style="margin-left:0px;"><button class="btn btn-primary"onclick="location.href='CreatQuestionaire.jsp'" >创建问卷</button></div>
+<div class="span1" style="margin-left:40px;" ><button class="btn disabled btn-success" onclick="location.href='MyQC.jsp'" >未发布问卷</button></div>
+<div class="span1" style="margin-left:50px;" ><button class="btn btn-primary" onclick="location.href='MyQO.jsp'" >已发布问卷</button></div>
+<div class="span1" style="margin-left:50px;" ><button class="btn btn-primary" onclick="location.href='MyQS.jsp'" >已关闭问卷</button></div>
+<div class="span1" style="margin-left:50px;" ><button class="btn btn-primary" onclick="location.href='MyRQ.jsp'" >我的答卷</button></div>
+<br><br><br><br>
+<%	QuestionaireData d = new QuestionaireData();
+	out.print(d.showData(userid,1));%>
 </div>
-</div><br><br>
- <div id = "con" class = "container">
- <%	QuestionaireData d = new QuestionaireData();
-	out.print(d.showData(userid,2));%>
- </div>
+<form id="formQ">
+ <input type = "hidden" name="qid" id="paraQ">
+ </form>
+ 
+ </div><br><br>
  <%@include file = "footer.jsp" %>
 </body>
 </html>

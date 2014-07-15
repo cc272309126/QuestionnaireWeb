@@ -3,7 +3,7 @@ package com.CoodeTeam.Servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
+import com.CoodeTeam.JavaBean.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,10 +42,24 @@ public class UserServlet extends HttpServlet{
 			creatQuestionaire(request,response);
 		}else if(method.equals("insertData")){
 			insertData(request,response);
+		}else if(method.equals("closeQuestionaire")){
+			closeQuestionaire(request,response);
+		}else if(method.equals("deleteQuestionaire")){
+			deleteQuestionaire(request,response);
+		}else if(method.equals("analyse")){
+			analyse(request,response);
+		}else if(method.equals("updateData")){
+			updateData(request,response);
 		}
 	}
 	
-	private void AdminLogin(HttpServletRequest request,
+	protected void analyse(HttpServletRequest request,
+			HttpServletResponse response) {
+		String qnid = request.getParameter("qnid");
+		
+		
+	}
+	protected void AdminLogin(HttpServletRequest request,
 			HttpServletResponse response) {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -238,46 +252,40 @@ public class UserServlet extends HttpServlet{
 		int i = 1;
 		for(int t = 1;t<=100;t++){
 			if(request.getParameter("A"+t) != null){
-				strArray[i] =new String( request.getParameter("A"+t).getBytes("ISO8859_1"),"UTF-8");
-				type[i] = "单选";
+				strArray[i] =new String( request.getParameter("A"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "single";
 				int option = 1;
 				for(int m =1;m<=100;m++){
 					if(request.getParameter(t+"-"+m)!=null){
-						ans[i] = ans[i] +"["+option+"]"+new String(request.getParameter(t+"-"+m).getBytes("ISO8859_1"),"UTF-8");
+						ans[i] = ans[i]+new String(request.getParameter(t+"-"+m).getBytes("UTF-8"),"UTF-8")+";";
 						option++;
 					}
 				}
 				i++;
 			}
 			else if(request.getParameter("B"+t) != null){
-				strArray[i] = new String(request.getParameter("B"+t).getBytes("ISO8859_1"),"UTF-8");
-				type[i] = "多选";
+				strArray[i] = new String(request.getParameter("B"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "mutiple";
 				int op = 1;
 				for(int m =1;m<=100;m++){
 					if(request.getParameter(t+"-"+m)!=null){
-						ans[i] = ans[i] +"["+op+"]"+new String(request.getParameter(t+"-"+m).getBytes("ISO8859_1"),"UTF-8");
+						ans[i] = ans[i]+new String(request.getParameter(t+"-"+m).getBytes("UTF-8"),"UTF-8")+";";
 						op++;
 					}
 				}
 				i++;
 			}
 			else if(request.getParameter("C"+t) != null){
-				strArray[i] = new String(request.getParameter("C"+t).getBytes("ISO8859_1"),"UTF-8");
-				type[i] = "判断";
+				strArray[i] = new String(request.getParameter("C"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "judge";
 				i++;
 			}
 			else if(request.getParameter("D"+t) != null){
-				strArray[i] = new String(request.getParameter("D"+t).getBytes("ISO8859_1"),"UTF-8");
-				type[i] = "问答";
+				strArray[i] = new String(request.getParameter("D"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "blank";
 				i++;
 			}
-		}
-
-		for(int count =1 ;count<i;count++){
-			System.out.println(strArray[count]);
-			System.out.println(ans[count]);
-		}
-		
+		}		
 		
 	    HttpSession session = request.getSession();
 	   int userid=(Integer) session.getAttribute("UserID");
@@ -286,8 +294,119 @@ public class UserServlet extends HttpServlet{
 			
 			UserBean userbean = new UserBean();
 			int queid  = userbean.getid(userid);
-			System.out.println(queid);
+			//System.out.println(queid);
 	    	userbean.additem(i-1,strArray,ans,type,queid);
+	    	response.sendRedirect("AnswerQuestionnaire.jsp?qid="+queid);
+	    	//response.sendRedirect("MyQC.jsp");
+	    	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	protected void closeQuestionaire(HttpServletRequest request,HttpServletResponse response){
+		int qid = Integer.parseInt(request.getParameter("qid"));
+		DBAccess db = new DBAccess();
+		try {
+		if(db.createConn()){
+			String sql = "update questionaire set state = 'closed' WHERE idQuestionare = "+qid;
+			db.update(sql);
+			db.closeStm();
+			db.closeConn();
+			String page = request.getParameter("Qpage");
+				response.sendRedirect(page);
+		}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	protected void deleteQuestionaire(HttpServletRequest request,HttpServletResponse response){
+		int qid = Integer.parseInt(request.getParameter("qid"));
+		System.out.print(qid);
+		DBAccess db =new DBAccess();
+		try{
+		if(db.createConn()){
+			String Dsql1 = "delete from questions where Questionare_idQuestionare = "+qid;
+			String Dsql2 = "delete from questionaire where idQuestionare = "+qid;
+			System.out.print(Dsql1);
+			db.update(Dsql1);
+			db.update(Dsql2);
+			db.closeStm();
+			db.closeConn();
+			String page = request.getParameter("Qpage");
+			response.sendRedirect(page);
+		}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	protected void updateData(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
+		
+		int qid = Integer.parseInt(request.getParameter("qid")); 
+		qid = 24;
+		String [] strArray = new String [100];
+		String [] ans = new String [100];
+		String [] type = new String [100];
+		
+		DBAccess db = new DBAccess();
+		String sql = "delete from  questions where Questionare_idQuestionare = "+qid;
+		if(db.createConn()){			
+			db.update(sql);
+			db.closeStm();
+			db.closeConn();
+		}
+		
+		
+		
+		for ( int kk = 0;kk<100 ;kk++)
+			ans[kk] = "";
+					
+		int i = 1;
+		for(int t = 1;t<=100;t++){
+			if(request.getParameter("A"+t) != null){
+				strArray[i] =request.getParameter("A"+t);
+				type[i] = "single";
+				int option = 1;
+				for(int m =1;m<=100;m++){
+					if(request.getParameter(t+"-"+m)!=null){
+						ans[i] = ans[i]+ new String(request.getParameter(t+"-"+m).getBytes("UTF-8"),"UTF-8")+";";
+						option++;
+					}
+				}
+				i++;
+			}
+			else if(request.getParameter("B"+t) != null){
+				strArray[i] = new String(request.getParameter("B"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "mutiple";
+				int op = 1;
+				for(int m =1;m<=100;m++){
+					if(request.getParameter(t+"-"+m)!=null){
+						ans[i] = ans[i] +new String(request.getParameter(t+"-"+m).getBytes("UTF-8"),"UTF-8")+";";
+						op++;
+					}
+				}
+				i++;
+			}
+			else if(request.getParameter("C"+t) != null){
+				strArray[i] = new String(request.getParameter("C"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "judge";
+				i++;
+			}
+			else if(request.getParameter("D"+t) != null){
+				strArray[i] = new String(request.getParameter("D"+t).getBytes("UTF-8"),"UTF-8");
+				type[i] = "blank";
+				i++;
+			}
+		}
+
+		try {
+			
+			UserBean userbean = new UserBean();
+	    	userbean.additem(i-1,strArray,ans,type,qid);
 	    	response.sendRedirect("MyQA.jsp");
 	    	
 		} catch (IOException e) {
@@ -295,8 +414,5 @@ public class UserServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		
-	
-		
 	}
-
 }

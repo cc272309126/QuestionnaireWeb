@@ -23,9 +23,11 @@
             <a  href ="#"  class ="dropdown-toggle"  data-toggle ="dropdown" ><font color="white"><b>我的问卷</b></font><b  class ="caret" ></b></a> 
             <ul  class ="dropdown-menu" > 
             	 <li ><a  href ="CreatQuestionaire.jsp">创建问卷</a></li>
-            	 <li ><a  href ="MyQA.jsp">全部问卷</a></li> 
+            	         
                  <li ><a  href ="MyQC.jsp">未发布问卷</a></li>    
                  <li ><a  href ="MyQO.jsp">已发布问卷</a></li> 
+                 <li ><a  href ="MyQS.jsp">已关闭问卷</a></li> 
+                 <li ><a  href ="MyRQ.jsp">我的答卷</a></li> 
                 
             </ul>
             </li>
